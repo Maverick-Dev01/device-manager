@@ -5,103 +5,123 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:paddingTop="?attr/actionBarSize"
+    android:background="@color/md_theme_background"
     android:theme="@style/Theme.AppTheme">
 
+    <!-- Título centrado -->
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold"
+        android:gravity="center"
         android:text="REGISTRARSE"
-        android:paddingTop="30dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="24dp"
         android:textColor="@color/md_theme_primary" />
 
+    <!-- Campo Nombre de Usuario -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:boxStrokeColor="@color/md_theme_primary">
+        android:layout_marginBottom="12dp"
+        app:boxStrokeColor="@color/md_theme_primary"
+        app:startIconDrawable="@android:drawable/ic_menu_edit">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/usernameET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nombre de usuario"
-            android:inputType="text" />
+            android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Campo Nombre Completo -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:boxStrokeColor="@color/md_theme_primary">
+        android:layout_marginBottom="12dp"
+        app:boxStrokeColor="@color/md_theme_primary"
+        app:startIconDrawable="@android:drawable/ic_menu_agenda">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/fullNameET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nombre completo"
-            android:inputType="text" />
+            android:inputType="text"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Campo Correo Electrónico -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:boxStrokeColor="@color/md_theme_primary">
+        android:layout_marginBottom="12dp"
+        app:boxStrokeColor="@color/md_theme_primary"
+        app:startIconDrawable="@android:drawable/ic_dialog_email">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/emailET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Correo electrónico"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Campo Contraseña -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
-        app:boxStrokeColor="@color/md_theme_primary">
+        android:layout_marginBottom="12dp"
+        app:endIconMode="password_toggle"
+        app:boxStrokeColor="@color/md_theme_primary"
+        app:startIconDrawable="@android:drawable/ic_lock_lock">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/passwordET"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Contraseña"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Campo Confirmar Contraseña -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
-        app:boxStrokeColor="@color/md_theme_primary">
+        app:endIconMode="password_toggle"
+        app:boxStrokeColor="@color/md_theme_primary"
+        app:startIconDrawable="@android:drawable/ic_lock_lock">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/confirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Confirmar contraseña"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- Botón de Registro -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="REGISTRARSE"
-        android:layout_marginTop="10dp"
+        android:textAllCaps="false"
+        android:textSize="16sp"
         android:backgroundTint="@color/md_theme_primary"
         android:textColor="@color/md_theme_onPrimary"
-        app:cornerRadius="3dp"/>
+        app:cornerRadius="8dp"/>
 
+    <!-- Enlace para ir a Login -->
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/signInTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="¿Ya tienes una cuenta? Inicia sesión aquí"
-        android:layout_gravity="center_horizontal"
         android:textColor="@color/md_theme_secondary"
-        android:layout_marginTop="15dp"
-        android:textSize="15sp" />
+        android:textSize="14sp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"/>
 </LinearLayout>
