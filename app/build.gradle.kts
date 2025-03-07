@@ -62,7 +62,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     //material
-    implementation("com.google.android.material:material:1.11.0")
+    implementation("com.google.android.material:material:1.12.0")
 
     // para la navegacion en fragments
     implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")

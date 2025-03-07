@@ -39,5 +39,9 @@
         android:id="@+id/addDeviceFragment"
         android:name="com.maverick.adminapp.ui.home.AddDeviceFragment"
         android:label="Add Device"
-        tools:layout="@layout/fragment_add_device" />
+        tools:layout="@layout/fragment_add_device">
+        <action
+            android:id="@+id/action_addDeviceFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>
