@@ -20,9 +20,17 @@ Se ha implementado la autenticación en la aplicación utilizando Firebase Authe
 ✅ Cálculo automático del **monto a pagar** en base a la **frecuencia de pago** y **período seleccionado**.  
 ✅ Ocultación de la barra de navegación en el fragmento de registro.  
 ✅ Implementación de un **botón flotante (Floating Action Button - FAB)** en la pantalla **Home**, permitiendo abrir el formulario de registro rápidamente.  
-✅ Redirección automática al **Home** después de guardar un dispositivo.  
+✅ Redirección automática al **Home** después de guardar un dispositivo.
+✅ Se corrigieron formatos de datos para visualización correcta en la UI."
 
----
+# Feature: Display Device List
+
+## 📋 **Funcionalidades implementadas**
+✅ Implementación de un RecyclerView en HomeFragment para mostrar la lista de dispositivos.
+✅ Creación de un Adapter para RecyclerView (DeviceAdapter.kt).
+✅ Configuración del ViewHolder para mostrar los datos correctamente.
+✅ Conexión de Firestore con el RecyclerView para recuperar los dispositivos en tiempo real.
+✅ Se manejó clicks en los dispositivos para abrir la vista detallada (ViewDeviceFragment).
 
 ## 🛑 **Pendientes por realizar**
 ❌ **Implementar validaciones** en el formulario para evitar datos incorrectos.  
