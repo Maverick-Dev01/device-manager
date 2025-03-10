@@ -6,6 +6,9 @@ plugins {
     //FIREBASE
     id("com.google.gms.google-services") // Agregar esta línea
 
+//    id("androidx.navigation.safeargs") // Add this line
+
+
 }
 
 android {
@@ -14,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "com.maverick.adminapp"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -74,4 +77,10 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-auth")
 
+
+
+    //RecyclerView
+//    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+//    implementation("androidx.navigation:navigation-safe-args-gradle-plugin:2.8.8")
 }

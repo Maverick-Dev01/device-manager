@@ -1,7 +1,5 @@
 package com.maverick.adminapp.ui.home
 
-import android.app.DatePickerDialog
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,15 +13,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 import com.maverick.adminapp.R
 import com.maverick.adminapp.utils.DeviceFormHelper
 import com.maverick.adminapp.utils.NavigationHelper
-import java.util.Calendar
+
 
 class AddDeviceFragment : Fragment() {
-
 
     private lateinit var imeiInput: TextInputEditText
     private lateinit var clientInput: TextInputEditText
@@ -39,6 +37,9 @@ class AddDeviceFragment : Fragment() {
     private lateinit var amountToPay: TextInputEditText
     private lateinit var btnCancel: Button
     private lateinit var btnRegister: Button
+    private lateinit var btnEditar: Button
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,6 +61,7 @@ class AddDeviceFragment : Fragment() {
 
         // 🔹 Configurar eventos
         setupListeners()
+
     }
 
     private fun initViews(view: View) {
@@ -78,6 +80,8 @@ class AddDeviceFragment : Fragment() {
 
         btnCancel = view.findViewById(R.id.btn_cancel)
         btnRegister = view.findViewById(R.id.btn_register_device)
+
+        btnEditar = view.findViewById(R.id.btnEditar)
     }
 
     private fun setupDropdowns() {
@@ -96,6 +100,8 @@ class AddDeviceFragment : Fragment() {
         modelAC.setOnClickListener { modelAC.showDropDown() }
         frequencyAC.setOnClickListener { frequencyAC.showDropDown() }
         periodAC.setOnClickListener { periodAC.showDropDown() }
+
+
 
         // 🔹 Mostrar el dropdown al enfocar el campo
         brandAC.setOnFocusChangeListener { _, hasFocus ->
@@ -178,8 +184,10 @@ class AddDeviceFragment : Fragment() {
             "periodoPago" to periodAC.text.toString(),
             "fechaInicio" to startDate.text.toString(),
             "fechaFin" to endDate.text.toString(),
-            "montoAPagar" to amountToPay.text.toString()
+            "montoAPagar" to (amountToPay.text.toString().replace(",", "").toDoubleOrNull() ?: 0.0)
         )
+
+        Log.d("FirestoreDebug", "Registrando dispositivo con montoAPagar: ${amountToPay.text.toString()}")
 
         db.collection("dispositivos")
             .add(dispositivo)
