@@ -164,7 +164,7 @@ object DeviceFormHelper {
         amountTextView: TextInputEditText
     ) {
         if (price == null || price <= 0 || startDate.isEmpty() || endDate.isEmpty() || frequency.isEmpty()) {
-            amountTextView.setText("") // No mostramos nada hasta que todo esté correcto
+            amountTextView.setText("0.0") // Establecer un valor predeterminado para evitar nulos
             return
         }
 
@@ -183,28 +183,32 @@ object DeviceFormHelper {
                     "Semanal" -> totalDays / 7  // Semanas completas
                     "Quincenal" -> totalDays / 15 // Quincenas completas
                     "Mensual" -> totalDays / 30  // Meses completos
-                    else -> 0
+                    else -> 1  // Evitar divisiones por 0
                 }
 
-                if (numberOfPayments > 0) {
-                    // Calcular el pago por período
-                    val basePayment = price / numberOfPayments
+                // Si numberOfPayments es menor o igual a 0, asignar al menos 1 para evitar errores
+                val safePayments = if (numberOfPayments <= 0) 1 else numberOfPayments
 
-                    // Ajustar el último pago si hay diferencia
-                    val totalCalculated = basePayment * numberOfPayments
-                    val difference = price - totalCalculated
+                // Calcular el pago por período
+                val basePayment = price / safePayments
 
-                    val finalPayment = if (difference > 0) basePayment + difference else basePayment
+                // Ajustar el último pago si hay diferencia
+                val totalCalculated = basePayment * safePayments
+                val difference = price - totalCalculated
 
-                    // Mostrar el monto ajustado
-                    amountTextView.setText("$%.2f".format(finalPayment))
-                }
+                val finalPayment = if (difference > 0) basePayment + difference else basePayment
+
+                // 🔥 Se asigna como número, no como String formateado
+                amountTextView.setText(String.format(Locale.getDefault(), "%.2f", finalPayment))
+            } else {
+                amountTextView.setText("0.0") // Si las fechas no son válidas, establecer un valor por defecto
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            amountTextView.setText("")
+            amountTextView.setText("0.0") // Si hay error en el cálculo, evitar nulos
         }
     }
+
 
 
 
