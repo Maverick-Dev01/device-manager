@@ -28,6 +28,7 @@ class ViewDeviceFragment : Fragment() {
     private lateinit var txtPeriodoPago: MaterialTextView
 
     private lateinit var btnEditar: Button
+    private lateinit var btnEliminar: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +67,7 @@ class ViewDeviceFragment : Fragment() {
         txtFrecuenciaPago = view.findViewById(R.id.txtFrecuenciaPago)
         txtPeriodoPago = view.findViewById(R.id.txtPeriodoPago)
         btnEditar = view.findViewById(R.id.btnEditar)
+        btnEliminar = view.findViewById(R.id.btnEliminar)
 
     }
     private fun loadDeviceData(deviceId: String) {
@@ -108,6 +110,33 @@ class ViewDeviceFragment : Fragment() {
             findNavController().navigate(R.id.action_viewDeviceFragment_to_addDeviceFragment, bundle)
         }
 
+        btnEliminar.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Confirmar eliminación")
+                .setMessage("¿Estás seguro de que deseas eliminar este dispositivo?")
+                .setPositiveButton("Eliminar") { _, _ ->
+                    eliminarDispositivo(deviceId)
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+
+
     }
+
+    private fun eliminarDispositivo(deviceId: String) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("dispositivos").document(deviceId)
+            .delete()
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Dispositivo eliminado correctamente", Toast.LENGTH_SHORT).show()
+                findNavController().navigate(R.id.action_viewDeviceFragment_to_homeFragment) // 🔹 Regresar a la lista de dispositivos
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Error al eliminar: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
 
 }
