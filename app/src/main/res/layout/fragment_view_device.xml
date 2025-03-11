@@ -104,8 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Editar"
-            android:icon="@drawable/ic_edit"
-            style="@style/Widget.Material3.Button.OutlinedButton"/>
+            android:icon="@drawable/ic_edit" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBloquear"

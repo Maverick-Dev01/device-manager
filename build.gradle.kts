@@ -5,7 +5,11 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
-//    id("androidx.navigation.safeargs") version "2.7.7" apply false
 
 }
 
+buildscript {
+    dependencies {
+        classpath ("androidx.navigation:navigation-safe-args-gradle-plugin:2.8.8")
+    }
+}

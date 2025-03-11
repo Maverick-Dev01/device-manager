@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.firestore.FirebaseFirestore
 import com.maverick.adminapp.R
 import com.maverick.adminapp.model.Device
@@ -25,6 +27,8 @@ class ViewDeviceFragment : Fragment() {
     private lateinit var txtFrecuenciaPago: MaterialTextView
     private lateinit var txtPeriodoPago: MaterialTextView
 
+    private lateinit var btnEditar: Button
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,7 +43,21 @@ class ViewDeviceFragment : Fragment() {
         arguments?.let {
             deviceId = it.getString("deviceId") ?: ""
         }
+        initViews(view)
 
+        setupListener()
+
+        // Cargar los datos
+        if (deviceId.isNotEmpty()) {
+            loadDeviceData(deviceId)
+        } else {
+            Toast.makeText(requireContext(), "Error al cargar el dispositivo", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+    }
+
+    private fun initViews(view: View) {
         // Inicializar vistas
         txtNombreCliente = view.findViewById(R.id.txtNombreCliente)
         txtMarcaModelo = view.findViewById(R.id.txtMarcaModelo)
@@ -47,19 +65,9 @@ class ViewDeviceFragment : Fragment() {
         txtMontoPagar = view.findViewById(R.id.txtMontoPagar)
         txtFrecuenciaPago = view.findViewById(R.id.txtFrecuenciaPago)
         txtPeriodoPago = view.findViewById(R.id.txtPeriodoPago)
-
-
-
-        // Cargar los datos
-        if (deviceId.isNotEmpty()) {
-            loadDeviceData(deviceId)
-        } else {
-            Toast.makeText(requireContext(), "Error al cargar el dispositivo", Toast.LENGTH_SHORT).show()
-        }
-
+        btnEditar = view.findViewById(R.id.btnEditar)
 
     }
-
     private fun loadDeviceData(deviceId: String) {
         firestore.collection("dispositivos").document(deviceId)
             .get()
@@ -69,18 +77,37 @@ class ViewDeviceFragment : Fragment() {
 
                     // Asignar datos a las vistas
                     txtNombreCliente.text = device?.cliente ?: "Sin nombre"
-                    txtMarcaModelo.text = "${device?.marca ?: "Marca"} - ${device?.modelo ?: "Modelo"}"
+                    txtMarcaModelo.text =
+                        "${device?.marca ?: "Marca"} - ${device?.modelo ?: "Modelo"}"
                     txtPrecio.text = "Precio: $${device?.precio ?: 0.0}"
                     txtMontoPagar.text = "Monto a Pagar: $${device?.montoAPagar ?: 0.0}"
-                    txtFrecuenciaPago.text = "Frecuencia de Pago: ${device?.frecuenciaPago ?: "N/A"}"
-                    txtPeriodoPago.text = "Periodo: ${device?.fechaInicio ?: "???"} - ${device?.fechaFin ?: "???"}"
+                    txtFrecuenciaPago.text =
+                        "Frecuencia de Pago: ${device?.frecuenciaPago ?: "N/A"}"
+                    txtPeriodoPago.text =
+                        "Periodo: ${device?.fechaInicio ?: "???"} - ${device?.fechaFin ?: "???"}"
                 } else {
-                    Toast.makeText(requireContext(), "Dispositivo no encontrado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Dispositivo no encontrado",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(requireContext(), "Error al obtener los datos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error al obtener los datos", Toast.LENGTH_SHORT)
+                    .show()
             }
+    }
+
+    private fun setupListener() {
+
+        btnEditar.setOnClickListener {
+            val bundle = Bundle().apply {
+                putString("deviceId", deviceId) // Pasar el ID del dispositivo
+            }
+            findNavController().navigate(R.id.action_viewDeviceFragment_to_addDeviceFragment, bundle)
+        }
+
     }
 
 }

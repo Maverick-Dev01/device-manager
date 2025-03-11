@@ -1,0 +1,9 @@
+Index: .gradle/config.properties
+===================================================================
+diff --git a/.gradle/config.properties b/.gradle/config.properties
+deleted file mode 100644
+--- a/.gradle/config.properties	(revision bb1114a4e20aac10e6b0d0061d7e8d7a8451a89d)
++++ /dev/null	(revision bb1114a4e20aac10e6b0d0061d7e8d7a8451a89d)
+@@ -1,2 +0,0 @@
+-#Fri Feb 21 09:40:27 CST 2025
+-java.home=C\:\\Program Files\\Android\\Android Studio\\jbr
