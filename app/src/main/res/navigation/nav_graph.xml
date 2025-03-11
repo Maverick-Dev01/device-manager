@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/loginFragment">
 
+    <!-- Login Fragment -->
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.maverick.adminapp.ui.auth.LoginFragment"
@@ -14,6 +15,7 @@
             app:destination="@id/homeFragment" />
     </fragment>
 
+    <!-- Register Fragment -->
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.maverick.adminapp.ui.auth.RegisterFragment"
@@ -24,6 +26,7 @@
             app:destination="@id/homeFragment" />
     </fragment>
 
+    <!-- Home Fragment -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.maverick.adminapp.ui.home.HomeFragment"
@@ -38,21 +41,39 @@
             app:destination="@id/viewDeviceFragment"/>
     </fragment>
 
-    <fragment
-        android:id="@+id/addDeviceFragment"
-        android:name="com.maverick.adminapp.ui.home.AddDeviceFragment"
-        android:label="Add Device"
-        tools:layout="@layout/fragment_add_device">
-        <action
-            android:id="@+id/action_addDeviceFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
-
+    <!-- View Device Fragment (Donde se visualiza un dispositivo) -->
     <fragment
         android:id="@+id/viewDeviceFragment"
         android:name="com.maverick.adminapp.ui.device.ViewDeviceFragment"
         android:label="Ver Dispositivo"
         tools:layout="@layout/fragment_view_device">
+
+        <!-- Acción para ir a la pantalla de edición con el ID del dispositivo -->
+        <action
+            android:id="@+id/action_viewDeviceFragment_to_addDeviceFragment"
+            app:destination="@id/addDeviceFragment">
+            <argument
+                android:name="deviceId"
+                app:argType="string"
+                app:nullable="true"/>
+        </action>
+        <action
+            android:id="@+id/action_viewDeviceFragment_to_homeFragment"
+            app:destination="@id/homeFragment">
+        </action>
+    </fragment>
+
+    <!-- Add Device Fragment (Donde se agrega o edita un dispositivo) -->
+    <fragment
+        android:id="@+id/addDeviceFragment"
+        android:name="com.maverick.adminapp.ui.home.AddDeviceFragment"
+        android:label="Add Device"
+        tools:layout="@layout/fragment_add_device">
+
+        <!-- Acción para regresar al Home después de registrar/editar -->
+        <action
+            android:id="@+id/action_addDeviceFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
 
 </navigation>

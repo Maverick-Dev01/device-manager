@@ -35,10 +35,10 @@ class AddDeviceFragment : Fragment() {
     private lateinit var endDate: TextInputEditText
     private lateinit var priceInput: TextInputEditText
     private lateinit var amountToPay: TextInputEditText
+
     private lateinit var btnCancel: Button
     private lateinit var btnRegister: Button
     private lateinit var btnEditar: Button
-
 
 
     override fun onCreateView(
@@ -61,6 +61,17 @@ class AddDeviceFragment : Fragment() {
 
         // 🔹 Configurar eventos
         setupListeners()
+
+        val deviceId = arguments?.getString("deviceId")
+
+        if (!deviceId.isNullOrEmpty()) {
+            obtenerDatosDispositivo(deviceId)
+            btnRegister.text = "Actualizar" // Cambiar texto del botón
+            btnRegister.setOnClickListener { actualizarDispositivo(deviceId) }
+        } else {
+            btnRegister.text = "Registrar" // Si es un nuevo registro
+            btnRegister.setOnClickListener { registerDevice() }
+        }
 
     }
 
@@ -92,7 +103,13 @@ class AddDeviceFragment : Fragment() {
     }
 
     private fun setupDatePicker() {
-        DeviceFormHelper.setupDatePicker(requireContext(), startDate, endDate, frequencyAC, periodAC)
+        DeviceFormHelper.setupDatePicker(
+            requireContext(),
+            startDate,
+            endDate,
+            frequencyAC,
+            periodAC
+        )
     }
 
     private fun setupListeners() {
@@ -100,7 +117,6 @@ class AddDeviceFragment : Fragment() {
         modelAC.setOnClickListener { modelAC.showDropDown() }
         frequencyAC.setOnClickListener { frequencyAC.showDropDown() }
         periodAC.setOnClickListener { periodAC.showDropDown() }
-
 
 
         // 🔹 Mostrar el dropdown al enfocar el campo
@@ -187,7 +203,10 @@ class AddDeviceFragment : Fragment() {
             "montoAPagar" to (amountToPay.text.toString().replace(",", "").toDoubleOrNull() ?: 0.0)
         )
 
-        Log.d("FirestoreDebug", "Registrando dispositivo con montoAPagar: ${amountToPay.text.toString()}")
+        Log.d(
+            "FirestoreDebug",
+            "Registrando dispositivo con montoAPagar: ${amountToPay.text.toString()}"
+        )
 
         db.collection("dispositivos")
             .add(dispositivo)
@@ -203,4 +222,96 @@ class AddDeviceFragment : Fragment() {
                 Toast.makeText(requireContext(), "Error al registrar", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun obtenerDatosDispositivo(deviceId: String) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("dispositivos").document(deviceId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    // Convertir los datos obtenidos en variables
+                    val imei = document.getString("imei") ?: ""
+                    val cliente = document.getString("cliente") ?: ""
+                    val ciudad = document.getString("ciudad") ?: ""
+                    val telefono = document.getString("telefono") ?: ""
+                    val marca = document.getString("marca") ?: ""
+                    val modelo = document.getString("modelo") ?: ""
+                    val precio = document.getDouble("precio") ?: 0.0
+                    val frecuenciaPago = document.getString("frecuenciaPago") ?: ""
+                    val periodoPago = document.getString("periodoPago") ?: ""
+                    val fechaInicio = document.getString("fechaInicio") ?: ""
+                    val fechaFin = document.getString("fechaFin") ?: ""
+
+                    // Llenar los campos del formulario
+                    imeiInput.setText(imei)
+                    clientInput.setText(cliente)
+                    cityInput.setText(ciudad)
+                    phoneInput.setText(telefono)
+                    brandAC.setText(marca, false)
+                    modelAC.setText(modelo, false)
+                    priceInput.setText(precio.toString())
+                    frequencyAC.setText(frecuenciaPago, false)
+                    periodAC.setText(periodoPago, false)
+                    startDate.setText(fechaInicio)
+                    endDate.setText(fechaFin)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "No se encontró el dispositivo",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    requireContext(),
+                    "Error al obtener datos: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+
+    private fun actualizarDispositivo(deviceId: String) {
+        val db = FirebaseFirestore.getInstance()
+        calculatePayment()
+
+        val datosActualizados = mapOf(
+            "imei" to imeiInput.text.toString(),
+            "cliente" to clientInput.text.toString(),
+            "ciudad" to cityInput.text.toString(),
+            "telefono" to phoneInput.text.toString(),
+            "marca" to brandAC.text.toString(),
+            "modelo" to modelAC.text.toString(),
+            "precio" to priceInput.text.toString().toDoubleOrNull(),
+            "frecuenciaPago" to frequencyAC.text.toString(),
+            "periodoPago" to periodAC.text.toString(),
+            "fechaInicio" to startDate.text.toString(),
+            "fechaFin" to endDate.text.toString(),
+            "montoAPagar" to (amountToPay.text.toString().replace(",", "").toDoubleOrNull()
+                ?: 0.0)  // 🔥 Se asegura de enviar el monto correcto
+
+        )
+
+        db.collection("dispositivos").document(deviceId)
+            .update(datosActualizados)
+            .addOnSuccessListener {
+                Toast.makeText(
+                    requireContext(),
+                    "Dispositivo actualizado correctamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+                findNavController().navigateUp() // Regresar a los detalles del dispositivo
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(
+                    requireContext(),
+                    "Error al actualizar: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+
 }

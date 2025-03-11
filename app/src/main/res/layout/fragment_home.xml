@@ -37,7 +37,7 @@
         android:src="@drawable/ic_add"
         app:backgroundTint="@color/md_theme_primary"
         app:tint="@color/md_theme_onPrimary"
-        app:elevation="10dp"
+        app:elevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

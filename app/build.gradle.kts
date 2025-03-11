@@ -5,9 +5,7 @@ plugins {
 
     //FIREBASE
     id("com.google.gms.google-services") // Agregar esta línea
-
-//    id("androidx.navigation.safeargs") // Add this line
-
+    id("androidx.navigation.safeargs.kotlin")
 
 }
 
@@ -68,8 +66,8 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
 
     // para la navegacion en fragments
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
-    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
 
     //FIREBASE
     implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
@@ -80,7 +78,6 @@ dependencies {
 
 
     //RecyclerView
-//    implementation("androidx.recyclerview:recyclerview:1.3.2")
+  implementation("androidx.recyclerview:recyclerview:1.3.2")
 
-//    implementation("androidx.navigation:navigation-safe-args-gradle-plugin:2.8.8")
 }
