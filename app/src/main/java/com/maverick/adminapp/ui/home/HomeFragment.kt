@@ -49,6 +49,11 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadDevicesFromFirestore()
+    }
+
     private fun setupRecyclerView() {
         deviceAdapter = DeviceAdapter(deviceList) { selectedDevice ->
             val bundle = Bundle().apply {
@@ -84,14 +89,17 @@ class HomeFragment : Fragment() {
                             periodoPago = data["periodoPago"] as? String ?: "",
                             fechaInicio = data["fechaInicio"] as? String ?: "",
                             fechaFin = data["fechaFin"] as? String ?: "",
-                            montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0 // 🔹 Conversión segura
+                            montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0, // 🔹 Conversión segura
+                            estado = (data["estado"] as? String)?.equals("bloqueado", ignoreCase = true) ?: false
                         )
                     } catch (e: Exception) {
                         e.printStackTrace()
                         null
                     }
                 }
-                deviceAdapter.updateList(devices)
+                deviceList.clear()
+                deviceList.addAll(devices)
+                deviceAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { e ->
                 e.printStackTrace()

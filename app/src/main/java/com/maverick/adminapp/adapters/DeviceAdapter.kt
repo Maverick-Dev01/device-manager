@@ -31,10 +31,18 @@ class DeviceAdapter(private var deviceList: MutableList<Device>, private val onI
         holder.txtBrandModel.text = "${device.marca} - ${device.modelo}"
         holder.txtPrice.text = "Precio: $${device.precio}"
 
-        // Cambiar icono según el estado
+        // 🔹 Verifica correctamente si el estado es "bloqueado" o "activo"
+        val estaBloqueado = device.estado // Ya es booleano después de la corrección en Firestore
+
         holder.imgStatus.setImageResource(
-            if (device.estado) R.drawable.ic_phone_unlock else R.drawable.ic_phone_lock
+            if (estaBloqueado) R.drawable.ic_phone_lock else R.drawable.ic_phone_unlock
         )
+
+// 🔹 Ahora aplicamos el color del icono
+        holder.imgStatus.setColorFilter(
+            holder.itemView.context.getColor(if (estaBloqueado) R.color.red else R.color.green)
+        )
+
 
         holder.itemView.setOnClickListener { onItemClick(device) }
     }
