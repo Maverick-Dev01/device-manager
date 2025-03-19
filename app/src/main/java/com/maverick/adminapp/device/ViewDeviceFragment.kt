@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.maverick.adminapp.R
 import com.maverick.adminapp.model.Device
 import com.google.android.material.textview.MaterialTextView
+import com.maverick.adminapp.utils.NavigationHelper
 
 class ViewDeviceFragment : Fragment() {
 
@@ -27,6 +28,8 @@ class ViewDeviceFragment : Fragment() {
     private lateinit var txtFrecuenciaPago: MaterialTextView
     private lateinit var txtPeriodoPago: MaterialTextView
 
+
+    private lateinit var imgBack : ImageView
     private lateinit var btnEditar: Button
     private lateinit var btnEliminar: Button
     private lateinit var btnBloquear: Button
@@ -66,6 +69,9 @@ class ViewDeviceFragment : Fragment() {
         btnEditar = view.findViewById(R.id.btnEditar)
         btnBloquear = view.findViewById(R.id.btnBloquear)
         btnEliminar = view.findViewById(R.id.btnEliminar)
+
+        imgBack = view.findViewById(R.id.btnBack)
+
     }
 
     private fun loadDeviceData(deviceId: String) {
@@ -118,6 +124,10 @@ class ViewDeviceFragment : Fragment() {
 
 
     private fun setupListener() {
+
+        imgBack.setOnClickListener {
+            NavigationHelper.navigateToHomeTwo(findNavController())
+        }
         btnEditar.setOnClickListener {
             val bundle = Bundle().apply {
                 putString("deviceId", deviceId)
