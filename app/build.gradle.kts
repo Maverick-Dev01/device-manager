@@ -2,6 +2,11 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    //FIREBASE
+    id("com.google.gms.google-services") // Agregar esta línea
+    id("androidx.navigation.safeargs.kotlin")
+
 }
 
 android {
@@ -10,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId = "com.maverick.adminapp"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
@@ -56,4 +61,23 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //material
+    implementation("com.google.android.material:material:1.12.0")
+
+    // para la navegacion en fragments
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
+
+    //FIREBASE
+    implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-auth")
+
+
+
+    //RecyclerView
+  implementation("androidx.recyclerview:recyclerview:1.3.2")
+
 }
