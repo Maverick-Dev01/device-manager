@@ -312,6 +312,10 @@ class AddDeviceFragment : Fragment() {
                 ).show()
             }
     }
+    // validar que el campo no esté vacío y tenga 15 dígitos (que es el formato estándar del IMEI)
+    fun esIMEIValido(imei: String): Boolean {
+        return imei.length == 15 && imei.all { it.isDigit() }
+    }
 
 
 }

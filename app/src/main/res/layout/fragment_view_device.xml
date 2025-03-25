@@ -197,7 +197,6 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:text="Editar"
-                android:backgroundTint="@color/md_theme_primaryContainer"
                 app:cornerRadius="12dp"
                 app:iconGravity="textStart"
                 app:iconPadding="8dp"

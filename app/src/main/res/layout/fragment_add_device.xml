@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:hint="IMEI"
                 android:inputType="number"
-                android:maxLength="16"/>
+                android:maxLength="15"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Marca del Dispositivo -->
@@ -131,7 +131,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Número de Teléfono"
-                android:inputType="phone" />
+                android:inputType="phone"
+                android:maxLength="10"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Sección: Detalles de Compra -->
