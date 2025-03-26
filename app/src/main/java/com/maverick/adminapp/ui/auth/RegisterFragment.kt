@@ -11,9 +11,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.maverick.adminapp.R
 import com.maverick.adminapp.viewmodel.AuthViewModel
 
@@ -84,8 +86,24 @@ class RegisterFragment : Fragment() {
             // Llamar a la función para registrar usuario
             authViewModel.registerUser(username, fullName, email, password) { exception ->
                 if (exception == null) {
-                    Toast.makeText(requireContext(), "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
+                    if (exception == null) {
+                        // ACTUALIZAR EL NOMBRE DEL USUARIO EN FIREBASE
+                        val user = FirebaseAuth.getInstance().currentUser
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(username)  // o puedes usar fullName si prefieres
+                            .build()
+                        user?.updateProfile(profileUpdates)
+                            ?.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(requireContext(), "Registro exitoso", Toast.LENGTH_SHORT).show()
+                                    findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
+                                } else {
+                                    Toast.makeText(requireContext(), "Registro exitoso pero no se guardó el nombre", Toast.LENGTH_SHORT).show()
+                                    findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
+                                }
+                            }
+                    }
+
                 } else {
                     val errorMessage = when (exception) {
                         is FirebaseAuthWeakPasswordException -> "La contraseña es demasiado débil."

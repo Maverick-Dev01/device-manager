@@ -4,12 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.maverick.adminapp.R
 import com.maverick.adminapp.adapters.DeviceAdapter
@@ -37,9 +46,50 @@ class HomeFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.hide()
 
         // Inicializar vistas
+        val drawerLayout = view.findViewById<DrawerLayout>(R.id.drawer_layout)
+        val toolbar = view.findViewById<MaterialToolbar>(R.id.toolbar)
+        val navView = view.findViewById<NavigationView>(R.id.navigation_view)
+        val header = navView.getHeaderView(0)
+        val tvUserName = header.findViewById<TextView>(R.id.tvUserName)
+        val tvUserEmail = header.findViewById<TextView>(R.id.tvUserEmail)
+
+        val btnClose = header.findViewById<ImageButton>(R.id.btnCloseDrawer)
+
+        btnClose.setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
+
+        toolbar.title = "Dispositivos Registrados"
+
+        val user = FirebaseAuth.getInstance().currentUser
+
+        tvUserName.text = user?.displayName ?: "Nombre no disponible"
+        tvUserEmail.text = user?.email ?: "Correo no disponible"
         recyclerDevices = view.findViewById(R.id.recyclerViewDevices)
         fabAddDevice = view.findViewById(R.id.fab_add_device)
 
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_logout -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    cerrarSesion()
+                    true
+                }
+                else -> false
+            }
+        }
+
+
+        // Este método muestra el ícono hamburguesa a la izquierda del título
+        val toggle = ActionBarDrawerToggle(
+            activity,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
         setupRecyclerView()
         loadDevicesFromFirestore()
 
@@ -69,7 +119,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadDevicesFromFirestore() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
         firestore.collection("dispositivos")
+            .whereEqualTo("uid", uid)  // 🔒 Solo registros de este usuario
             .get()
             .addOnSuccessListener { result ->
                 val devices = result.documents.mapNotNull { doc ->
@@ -89,7 +142,7 @@ class HomeFragment : Fragment() {
                             periodoPago = data["periodoPago"] as? String ?: "",
                             fechaInicio = data["fechaInicio"] as? String ?: "",
                             fechaFin = data["fechaFin"] as? String ?: "",
-                            montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0, // 🔹 Conversión segura
+                            montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0,
                             estado = (data["estado"] as? String)?.equals("bloqueado", ignoreCase = true) ?: false
                         )
                     } catch (e: Exception) {
@@ -100,10 +153,32 @@ class HomeFragment : Fragment() {
                 deviceList.clear()
                 deviceList.addAll(devices)
                 deviceAdapter.notifyDataSetChanged()
+                // Mostrar u ocultar el mensaje vacío
+                val emptyMessage = view?.findViewById<TextView>(R.id.emptyMessage)
+                val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerViewDevices)
+
+                if (devices.isEmpty()) {
+                    emptyMessage?.visibility = View.VISIBLE
+                    recyclerView?.visibility = View.GONE
+                } else {
+                    emptyMessage?.visibility = View.GONE
+                    recyclerView?.visibility = View.VISIBLE
+                }
             }
             .addOnFailureListener { e ->
                 e.printStackTrace()
             }
+    }
+
+    private fun cerrarSesion() {
+        // --- OPCIÓN A: Si usas Firebase ---
+        FirebaseAuth.getInstance().signOut()
+
+        // Mostrar confirmación
+        Toast.makeText(requireContext(), "Sesión cerrada", Toast.LENGTH_SHORT).show()
+
+        // Redirigir al LoginFragment (si usas Navigation Component)
+        findNavController().navigate(R.id.loginFragment)
     }
 
 }

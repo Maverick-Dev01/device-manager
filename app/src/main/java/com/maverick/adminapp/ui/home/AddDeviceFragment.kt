@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.maverick.adminapp.R
 import com.maverick.adminapp.utils.DeviceFormHelper
@@ -186,9 +187,13 @@ class AddDeviceFragment : Fragment() {
 
     private fun registerDevice() {
         val db = FirebaseFirestore.getInstance()
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val uid = currentUser?.uid ?: return
+
         calculatePayment()
 
         val dispositivo = hashMapOf(
+            "uid" to uid,
             "imei" to imeiInput.text.toString(),
             "marca" to brandAC.text.toString(),
             "modelo" to modelAC.text.toString(),
@@ -275,43 +280,53 @@ class AddDeviceFragment : Fragment() {
 
     private fun actualizarDispositivo(deviceId: String) {
         val db = FirebaseFirestore.getInstance()
-        calculatePayment()
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        val datosActualizados = mapOf(
-            "imei" to imeiInput.text.toString(),
-            "cliente" to clientInput.text.toString(),
-            "ciudad" to cityInput.text.toString(),
-            "telefono" to phoneInput.text.toString(),
-            "marca" to brandAC.text.toString(),
-            "modelo" to modelAC.text.toString(),
-            "precio" to priceInput.text.toString().toDoubleOrNull(),
-            "frecuenciaPago" to frequencyAC.text.toString(),
-            "periodoPago" to periodAC.text.toString(),
-            "fechaInicio" to startDate.text.toString(),
-            "fechaFin" to endDate.text.toString(),
-            "montoAPagar" to (amountToPay.text.toString().replace(",", "").toDoubleOrNull()
-                ?: 0.0)  // 🔥 Se asegura de enviar el monto correcto
-
-        )
-
+        // Paso 1: Verificar si el dispositivo pertenece al usuario
         db.collection("dispositivos").document(deviceId)
-            .update(datosActualizados)
-            .addOnSuccessListener {
-                Toast.makeText(
-                    requireContext(),
-                    "Dispositivo actualizado correctamente",
-                    Toast.LENGTH_SHORT
-                ).show()
-                findNavController().navigateUp() // Regresar a los detalles del dispositivo
+            .get()
+            .addOnSuccessListener { document ->
+                val uidDelDocumento = document.getString("uid")
+
+                if (uidDelDocumento != currentUserId) {
+                    Toast.makeText(requireContext(), "No tienes permiso para editar este dispositivo", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+
+                // Paso 2: Si es válido, actualizar
+                calculatePayment()
+
+                val datosActualizados = mapOf(
+                    "imei" to imeiInput.text.toString(),
+                    "cliente" to clientInput.text.toString(),
+                    "ciudad" to cityInput.text.toString(),
+                    "telefono" to phoneInput.text.toString(),
+                    "marca" to brandAC.text.toString(),
+                    "modelo" to modelAC.text.toString(),
+                    "precio" to priceInput.text.toString().toDoubleOrNull(),
+                    "frecuenciaPago" to frequencyAC.text.toString(),
+                    "periodoPago" to periodAC.text.toString(),
+                    "fechaInicio" to startDate.text.toString(),
+                    "fechaFin" to endDate.text.toString(),
+                    "montoAPagar" to (amountToPay.text.toString().replace(",", "").toDoubleOrNull() ?: 0.0)
+                    // No tocamos el campo "uid"
+                )
+
+                db.collection("dispositivos").document(deviceId)
+                    .update(datosActualizados)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Dispositivo actualizado correctamente", Toast.LENGTH_SHORT).show()
+                        findNavController().navigateUp()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(requireContext(), "Error al actualizar: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(
-                    requireContext(),
-                    "Error al actualizar: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Error al verificar el dispositivo: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
     // validar que el campo no esté vacío y tenga 15 dígitos (que es el formato estándar del IMEI)
     fun esIMEIValido(imei: String): Boolean {
         return imei.length == 15 && imei.all { it.isDigit() }

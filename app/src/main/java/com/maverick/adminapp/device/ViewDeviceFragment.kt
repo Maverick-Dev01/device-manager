@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.maverick.adminapp.R
 import com.maverick.adminapp.model.Device
 import com.google.android.material.textview.MaterialTextView
+import com.google.firebase.auth.FirebaseAuth
 import com.maverick.adminapp.utils.NavigationHelper
 
 class ViewDeviceFragment : Fragment() {
@@ -75,15 +76,24 @@ class ViewDeviceFragment : Fragment() {
     }
 
     private fun loadDeviceData(deviceId: String) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
         firestore.collection("dispositivos").document(deviceId)
             .get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val data = document.data ?: return@addOnSuccessListener
 
-                    // Convertir manualmente `estado`
+                    // 🔐 Validar que el dispositivo pertenezca al usuario actual
+                    val uidDocumento = data["uid"] as? String
+                    if (uidDocumento != currentUserId) {
+                        Toast.makeText(requireContext(), "No tienes acceso a este dispositivo", Toast.LENGTH_SHORT).show()
+                        findNavController().navigate(R.id.action_viewDeviceFragment_to_homeFragment)
+                        return@addOnSuccessListener
+                    }
+
                     val estadoStr = data["estado"] as? String ?: "activo"
-                    val estadoBoolean = estadoStr == "bloqueado" // Si es "bloqueado", será `true`
+                    val estadoBoolean = estadoStr == "bloqueado"
 
                     val device = Device(
                         id = document.id,
@@ -99,10 +109,10 @@ class ViewDeviceFragment : Fragment() {
                         fechaInicio = data["fechaInicio"] as? String ?: "",
                         fechaFin = data["fechaFin"] as? String ?: "",
                         montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0,
-                        estado = estadoBoolean  // 🔹 Convertido manualmente
+                        estado = estadoBoolean
                     )
 
-                    // Asignar datos a las vistas
+                    // Mostrar en la interfaz
                     txtNombreCliente.text = device.cliente
                     txtMarcaModelo.text = "${device.marca} - ${device.modelo}"
                     txtPrecio.text = "Precio: $${device.precio}"
@@ -121,6 +131,7 @@ class ViewDeviceFragment : Fragment() {
                 findNavController().navigate(R.id.action_viewDeviceFragment_to_homeFragment)
             }
     }
+
 
 
     private fun setupListener() {
@@ -219,14 +230,32 @@ class ViewDeviceFragment : Fragment() {
     }
 
     private fun eliminarDispositivo(deviceId: String) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
         firestore.collection("dispositivos").document(deviceId)
-            .delete()
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Dispositivo eliminado correctamente", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_viewDeviceFragment_to_homeFragment)
+            .get()
+            .addOnSuccessListener { document ->
+                val uidDocumento = document.getString("uid")
+
+                if (uidDocumento != currentUserId) {
+                    Toast.makeText(requireContext(), "No tienes permiso para eliminar este dispositivo", Toast.LENGTH_SHORT).show()
+                    return@addOnSuccessListener
+                }
+
+                // ✅ Si el UID coincide, procedemos a eliminar
+                firestore.collection("dispositivos").document(deviceId)
+                    .delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Dispositivo eliminado correctamente", Toast.LENGTH_SHORT).show()
+                        findNavController().navigate(R.id.action_viewDeviceFragment_to_homeFragment)
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(requireContext(), "Error al eliminar: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Error al eliminar: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error al verificar: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 }
