@@ -119,7 +119,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadDevicesFromFirestore() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
         firestore.collection("dispositivos")
+            .whereEqualTo("uid", uid)  // 🔒 Solo registros de este usuario
             .get()
             .addOnSuccessListener { result ->
                 val devices = result.documents.mapNotNull { doc ->
@@ -139,7 +142,7 @@ class HomeFragment : Fragment() {
                             periodoPago = data["periodoPago"] as? String ?: "",
                             fechaInicio = data["fechaInicio"] as? String ?: "",
                             fechaFin = data["fechaFin"] as? String ?: "",
-                            montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0, // 🔹 Conversión segura
+                            montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0,
                             estado = (data["estado"] as? String)?.equals("bloqueado", ignoreCase = true) ?: false
                         )
                     } catch (e: Exception) {
@@ -150,11 +153,23 @@ class HomeFragment : Fragment() {
                 deviceList.clear()
                 deviceList.addAll(devices)
                 deviceAdapter.notifyDataSetChanged()
+                // Mostrar u ocultar el mensaje vacío
+                val emptyMessage = view?.findViewById<TextView>(R.id.emptyMessage)
+                val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerViewDevices)
+
+                if (devices.isEmpty()) {
+                    emptyMessage?.visibility = View.VISIBLE
+                    recyclerView?.visibility = View.GONE
+                } else {
+                    emptyMessage?.visibility = View.GONE
+                    recyclerView?.visibility = View.VISIBLE
+                }
             }
             .addOnFailureListener { e ->
                 e.printStackTrace()
             }
     }
+
     private fun cerrarSesion() {
         // --- OPCIÓN A: Si usas Firebase ---
         FirebaseAuth.getInstance().signOut()
