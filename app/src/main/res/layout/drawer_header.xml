@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/drawer_header.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:background="#0A1D2C"
+    android:gravity="center_vertical"
+    android:padding="16dp">
+
+    <ImageButton
+        android:id="@+id/btnCloseDrawer"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/baseline_arrow_back_24"
+        android:contentDescription="@string/close_drawer"
+        app:tint="@android:color/white"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true" />
+
+
+    <!-- Ícono circular -->
+    <ImageView
+        android:id="@+id/imgIcon"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/id_card_24px"
+        android:contentDescription="@string/user_icon"
+        android:padding="12dp"
+        app:tint="#ffff"
+        android:elevation="4dp"
+        android:clipToOutline="true"
+        android:outlineProvider="background" />
+
+    <!-- Contenedor vertical con nombre y correo -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre del usuario"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="#ffff"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/tvUserEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="correo@usuario.com"
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="#ffff"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+    </LinearLayout>
+
+</LinearLayout>
