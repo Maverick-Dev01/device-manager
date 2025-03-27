@@ -189,23 +189,53 @@ class AddDeviceFragment : Fragment() {
         val db = FirebaseFirestore.getInstance()
         val currentUser = FirebaseAuth.getInstance().currentUser
         val uid = currentUser?.uid ?: return
+        val imei = imeiInput.text?.toString()?.trim() ?: ""
+        val cliente = clientInput.text?.toString()?.trim() ?: ""
+        val ciudad = cityInput.text?.toString()?.trim() ?: ""
+        val telefono = phoneInput.text?.toString()?.trim() ?: ""
+        val marca = brandAC.text?.toString()?.trim() ?: ""
+        val modelo = modelAC.text?.toString()?.trim() ?: ""
+        val frecuencia = frequencyAC.text?.toString()?.trim() ?: ""
+        val periodo = periodAC.text?.toString()?.trim() ?: ""
+        val fechaInicio = startDate.text?.toString()?.trim() ?: ""
+        val fechaFin = endDate.text?.toString()?.trim() ?: ""
+        val precio = priceInput.text?.toString()?.toDoubleOrNull()
+        val montoAPagar = amountToPay.text?.toString()?.replace(",", "")?.toDoubleOrNull()
+
+        if (!esIMEIValido(imei)) {
+            Toast.makeText(requireContext(), "El IMEI debe tener exactamente 15 dígitos numéricos", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (!esTelefonoValido(telefono)) {
+            phoneInput.error = "El número debe tener exactamente 10 dígitos"
+            phoneInput.requestFocus()
+            return
+        }
+        if (
+            imei.isEmpty() || cliente.isEmpty() || ciudad.isEmpty() || telefono.isEmpty() ||
+            marca.isEmpty() || modelo.isEmpty() || frecuencia.isEmpty() || periodo.isEmpty() ||
+            fechaInicio.isEmpty() || fechaFin.isEmpty() || precio == null || montoAPagar == null
+        ) {
+            Toast.makeText(requireContext(), "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         calculatePayment()
 
         val dispositivo = hashMapOf(
             "uid" to uid,
-            "imei" to imeiInput.text.toString(),
-            "marca" to brandAC.text.toString(),
-            "modelo" to modelAC.text.toString(),
-            "cliente" to clientInput.text.toString(),
-            "ciudad" to cityInput.text.toString(),
-            "telefono" to phoneInput.text.toString(),
-            "precio" to priceInput.text.toString().toDoubleOrNull(),
-            "frecuenciaPago" to frequencyAC.text.toString(),
-            "periodoPago" to periodAC.text.toString(),
-            "fechaInicio" to startDate.text.toString(),
-            "fechaFin" to endDate.text.toString(),
-            "montoAPagar" to (amountToPay.text.toString().replace(",", "").toDoubleOrNull() ?: 0.0)
+            "imei" to imei,
+            "marca" to marca,
+            "modelo" to modelo,
+            "cliente" to cliente,
+            "ciudad" to ciudad,
+            "telefono" to telefono,
+            "precio" to precio,
+            "frecuenciaPago" to frecuencia,
+            "periodoPago" to periodo,
+            "fechaInicio" to fechaInicio,
+            "fechaFin" to fechaFin,
+            "montoAPagar" to (montoAPagar ?: 0.0)
         )
 
         Log.d(
@@ -282,6 +312,41 @@ class AddDeviceFragment : Fragment() {
         val db = FirebaseFirestore.getInstance()
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        val imei = imeiInput.text?.toString()?.trim() ?: ""
+        val cliente = clientInput.text?.toString()?.trim() ?: ""
+        val ciudad = cityInput.text?.toString()?.trim() ?: ""
+        val telefono = phoneInput.text?.toString()?.trim() ?: ""
+        val marca = brandAC.text?.toString()?.trim() ?: ""
+        val modelo = modelAC.text?.toString()?.trim() ?: ""
+        val frecuencia = frequencyAC.text?.toString()?.trim() ?: ""
+        val periodo = periodAC.text?.toString()?.trim() ?: ""
+        val fechaInicio = startDate.text?.toString()?.trim() ?: ""
+        val fechaFin = endDate.text?.toString()?.trim() ?: ""
+        val precio = priceInput.text?.toString()?.toDoubleOrNull()
+        val montoAPagar = amountToPay.text?.toString()?.replace(",", "")?.toDoubleOrNull()
+
+// 🔒 Validación de campos
+        if (
+            imei.isEmpty() || cliente.isEmpty() || ciudad.isEmpty() || telefono.isEmpty() ||
+            marca.isEmpty() || modelo.isEmpty() || frecuencia.isEmpty() || periodo.isEmpty() ||
+            fechaInicio.isEmpty() || fechaFin.isEmpty() || precio == null || montoAPagar == null
+        ) {
+            Toast.makeText(requireContext(), "Por favor completa todos los campos correctamente", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+// 🔐 Validar IMEI
+        if (!esIMEIValido(imei)) {
+            imeiInput.error = "El IMEI debe tener exactamente 15 dígitos numéricos"
+            imeiInput.requestFocus()
+            return
+        }
+        if (!esTelefonoValido(telefono)) {
+            phoneInput.error = "El número debe tener exactamente 10 dígitos"
+            phoneInput.requestFocus()
+            return
+        }
+
         // Paso 1: Verificar si el dispositivo pertenece al usuario
         db.collection("dispositivos").document(deviceId)
             .get()
@@ -297,18 +362,18 @@ class AddDeviceFragment : Fragment() {
                 calculatePayment()
 
                 val datosActualizados = mapOf(
-                    "imei" to imeiInput.text.toString(),
-                    "cliente" to clientInput.text.toString(),
-                    "ciudad" to cityInput.text.toString(),
-                    "telefono" to phoneInput.text.toString(),
-                    "marca" to brandAC.text.toString(),
-                    "modelo" to modelAC.text.toString(),
-                    "precio" to priceInput.text.toString().toDoubleOrNull(),
-                    "frecuenciaPago" to frequencyAC.text.toString(),
-                    "periodoPago" to periodAC.text.toString(),
-                    "fechaInicio" to startDate.text.toString(),
-                    "fechaFin" to endDate.text.toString(),
-                    "montoAPagar" to (amountToPay.text.toString().replace(",", "").toDoubleOrNull() ?: 0.0)
+                    "imei" to imei,
+                    "cliente" to cliente,
+                    "ciudad" to ciudad,
+                    "telefono" to telefono,
+                    "marca" to marca,
+                    "modelo" to modelo,
+                    "precio" to precio,
+                    "frecuenciaPago" to frecuencia,
+                    "periodoPago" to periodo,
+                    "fechaInicio" to fechaInicio,
+                    "fechaFin" to fechaFin,
+                    "montoAPagar" to montoAPagar
                     // No tocamos el campo "uid"
                 )
 
@@ -325,6 +390,10 @@ class AddDeviceFragment : Fragment() {
             .addOnFailureListener { e ->
                 Toast.makeText(requireContext(), "Error al verificar el dispositivo: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    fun esTelefonoValido(telefono: String): Boolean {
+        return telefono.length == 10 && telefono.all { it.isDigit() }
     }
 
     // validar que el campo no esté vacío y tenga 15 dígitos (que es el formato estándar del IMEI)
