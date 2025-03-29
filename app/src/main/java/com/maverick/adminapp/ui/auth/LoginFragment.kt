@@ -49,6 +49,12 @@ class LoginFragment : Fragment() {
             loginButton = view.findViewById(R.id.btnLogin)
             registerTV = view.findViewById(R.id.registerTV)
 
+        //Vista de recuperacion de contraseña
+        val forgotPasswordTextView = view.findViewById<TextView>(R.id.tvForgotPassword)
+        forgotPasswordTextView.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
+        }
+
         //observamos el LiveData del ViewModel
             authViewModel.user.observe(viewLifecycleOwner) { firebaseUser  ->
                 if (firebaseUser  != null) {

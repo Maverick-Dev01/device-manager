@@ -76,4 +76,18 @@
         android:textColor="@color/md_theme_secondary"
         android:textSize="14sp"
         android:layout_gravity="center_horizontal"/>
+
+    <!-- Enlace para recuperacion de contraseña -->
+    <TextView
+        android:id="@+id/tvForgotPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="¿Olvidaste tu contraseña?"
+        android:textColor="@color/md_theme_secondary"
+        android:layout_gravity="center_horizontal"/>
+
 </LinearLayout>
