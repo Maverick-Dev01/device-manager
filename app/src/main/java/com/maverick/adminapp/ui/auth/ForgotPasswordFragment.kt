@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.maverick.adminapp.R
@@ -45,6 +46,10 @@ class ForgotPasswordFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Ocultar el ícono de retroceso en la barra de herramientas
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as AppCompatActivity).supportActionBar?.setHomeButtonEnabled(false)
 
         val emailEditText = view.findViewById<EditText>(R.id.etEmail)
         val sendResetLinkButton = view.findViewById<Button>(R.id.btnSendResetLink)

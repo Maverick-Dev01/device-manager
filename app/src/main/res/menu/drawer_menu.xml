@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/navTodos"
+        android:icon="@drawable/ic_phone"
+        android:title="Todos los dispositivos"
+        />
+    <item
         android:id="@+id/navdispBloqueados"
         android:icon="@drawable/ic_lock"
         android:title="Dispositivos Bloqueados"
@@ -9,11 +14,6 @@
         android:id="@+id/navdispDesbloqueados"
         android:icon="@drawable/ic_unlock"
         android:title="Dispositivos Desbloqueados"
-        />
-    <item
-        android:id="@+id/navfavoritos"
-        android:icon="@drawable/favorite_24px"
-        android:title="Favoritos"
         />
     <item
         android:id="@+id/nav_logout"
