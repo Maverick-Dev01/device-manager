@@ -22,6 +22,7 @@ class ViewDeviceFragment : Fragment() {
     private lateinit var deviceId: String
     private val firestore = FirebaseFirestore.getInstance()
 
+    private lateinit var txtIMEI: MaterialTextView
     private lateinit var txtNombreCliente: MaterialTextView
     private lateinit var txtMarcaModelo: MaterialTextView
     private lateinit var txtPrecio: MaterialTextView
@@ -60,6 +61,7 @@ class ViewDeviceFragment : Fragment() {
     }
 
     private fun initViews(view: View) {
+        txtIMEI = view.findViewById(R.id.txtIMEI)
         txtNombreCliente = view.findViewById(R.id.txtNombreCliente)
         txtMarcaModelo = view.findViewById(R.id.txtMarcaModelo)
         txtPrecio = view.findViewById(R.id.txtPrecio)
@@ -113,6 +115,7 @@ class ViewDeviceFragment : Fragment() {
                     )
 
                     // Mostrar en la interfaz
+                    txtIMEI.text = device.imei
                     txtNombreCliente.text = device.cliente
                     txtMarcaModelo.text = "${device.marca} - ${device.modelo}"
                     txtPrecio.text = "Precio: $${device.precio}"

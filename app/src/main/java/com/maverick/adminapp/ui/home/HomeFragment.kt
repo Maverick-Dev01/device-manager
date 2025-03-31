@@ -88,6 +88,24 @@ class HomeFragment : Fragment() {
                     cerrarSesion()
                     true
                 }
+                R.id.navdispBloqueados -> {
+                    // Filtrar dispositivos bloqueados
+                    filterDevices("bloqueado")
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.navdispDesbloqueados -> {
+                    // Filtrar dispositivos desbloqueados
+                    filterDevices("activo")
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.navTodos -> {
+                    // Mostrar todos los dispositivos sin ningún filtro
+                    loadDevicesFromFirestore() // Llama a esta función sin pasar parámetros de estado
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
                 else -> false
             }
         }
@@ -164,12 +182,14 @@ class HomeFragment : Fragment() {
                     }
                 }
 
+                // Actualizar la lista completa
                 fullDeviceList.clear()
                 fullDeviceList.addAll(devices)
 
+                // Mostrar todos los dispositivos al principio
                 updateFilteredList("")
 
-                // Mostrar u ocultar mensaje vacío (ya funciona por `deviceList`)
+                // Mostrar u ocultar mensaje vacío
                 val emptyMessage = view?.findViewById<TextView>(R.id.emptyMessage)
                 val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerViewDevices)
 
@@ -181,8 +201,11 @@ class HomeFragment : Fragment() {
                     recyclerView?.visibility = View.VISIBLE
                 }
             }
-            .addOnFailureListener { e -> e.printStackTrace() }
+            .addOnFailureListener { e ->
+                e.printStackTrace()
+            }
     }
+
 
     private fun updateFilteredList(query: String) {
         val filtered = fullDeviceList.filter { dispositivo ->
@@ -197,6 +220,19 @@ class HomeFragment : Fragment() {
         deviceList.addAll(filtered)
         deviceAdapter.notifyDataSetChanged()
     }
+
+    private fun filterDevices(status: String) {
+        val filteredDevices = when (status) {
+            "bloqueado" -> fullDeviceList.filter { it.estado == true }
+            "activo" -> fullDeviceList.filter { it.estado == false }
+            else -> fullDeviceList
+        }
+
+        deviceList.clear()
+        deviceList.addAll(filteredDevices)
+        deviceAdapter.notifyDataSetChanged()
+    }
+
 
 
     private fun cerrarSesion() {
