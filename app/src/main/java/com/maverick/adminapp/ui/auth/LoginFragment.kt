@@ -49,6 +49,12 @@ class LoginFragment : Fragment() {
             loginButton = view.findViewById(R.id.btnLogin)
             registerTV = view.findViewById(R.id.registerTV)
 
+        //Vista de recuperacion de contraseña
+        val forgotPasswordTextView = view.findViewById<TextView>(R.id.tvForgotPassword)
+        forgotPasswordTextView.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
+        }
+
         //observamos el LiveData del ViewModel
             authViewModel.user.observe(viewLifecycleOwner) { firebaseUser  ->
                 if (firebaseUser  != null) {
@@ -59,7 +65,7 @@ class LoginFragment : Fragment() {
                     findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                 } else {
                     //si el usuario es nulo, mostramos un mensaje de error
-                    Toast.makeText(requireContext(), "Error en el inicio de sesión", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Usuario y/o contraseña incorrectos", Toast.LENGTH_SHORT).show()
                 }
             }
 

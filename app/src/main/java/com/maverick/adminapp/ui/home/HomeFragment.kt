@@ -1,9 +1,11 @@
 package com.maverick.adminapp.ui.home
 
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -11,6 +13,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.maverick.adminapp.R
 import com.maverick.adminapp.adapters.DeviceAdapter
 import com.maverick.adminapp.model.Device
+import androidx.core.widget.doOnTextChanged
 
 class HomeFragment : Fragment() {
 
@@ -31,6 +35,8 @@ class HomeFragment : Fragment() {
     private lateinit var deviceAdapter: DeviceAdapter
     private val firestore = FirebaseFirestore.getInstance()
     private val deviceList = mutableListOf<Device>() // Ahora sí es mutable
+    private val fullDeviceList = mutableListOf<Device>() // Lista completa (sin filtros)
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +59,14 @@ class HomeFragment : Fragment() {
         val tvUserName = header.findViewById<TextView>(R.id.tvUserName)
         val tvUserEmail = header.findViewById<TextView>(R.id.tvUserEmail)
 
+        val searchInput = header.findViewById<EditText>(R.id.searchInput)
+
         val btnClose = header.findViewById<ImageButton>(R.id.btnCloseDrawer)
+
+        searchInput.addTextChangedListener { editable: Editable? ->
+            val textoBuscado = editable?.toString()?.trim() ?: ""
+            updateFilteredList(textoBuscado)
+        }
 
         btnClose.setOnClickListener {
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -73,6 +86,24 @@ class HomeFragment : Fragment() {
                 R.id.nav_logout -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     cerrarSesion()
+                    true
+                }
+                R.id.navdispBloqueados -> {
+                    // Filtrar dispositivos bloqueados
+                    filterDevices("bloqueado")
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.navdispDesbloqueados -> {
+                    // Filtrar dispositivos desbloqueados
+                    filterDevices("activo")
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+                R.id.navTodos -> {
+                    // Mostrar todos los dispositivos sin ningún filtro
+                    loadDevicesFromFirestore() // Llama a esta función sin pasar parámetros de estado
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     true
                 }
                 else -> false
@@ -119,7 +150,10 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadDevicesFromFirestore() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
         firestore.collection("dispositivos")
+            .whereEqualTo("uid", uid)
             .get()
             .addOnSuccessListener { result ->
                 val devices = result.documents.mapNotNull { doc ->
@@ -139,7 +173,7 @@ class HomeFragment : Fragment() {
                             periodoPago = data["periodoPago"] as? String ?: "",
                             fechaInicio = data["fechaInicio"] as? String ?: "",
                             fechaFin = data["fechaFin"] as? String ?: "",
-                            montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0, // 🔹 Conversión segura
+                            montoAPagar = (data["montoAPagar"] as? Number)?.toDouble() ?: 0.0,
                             estado = (data["estado"] as? String)?.equals("bloqueado", ignoreCase = true) ?: false
                         )
                     } catch (e: Exception) {
@@ -147,14 +181,60 @@ class HomeFragment : Fragment() {
                         null
                     }
                 }
-                deviceList.clear()
-                deviceList.addAll(devices)
-                deviceAdapter.notifyDataSetChanged()
+
+                // Actualizar la lista completa
+                fullDeviceList.clear()
+                fullDeviceList.addAll(devices)
+
+                // Mostrar todos los dispositivos al principio
+                updateFilteredList("")
+
+                // Mostrar u ocultar mensaje vacío
+                val emptyMessage = view?.findViewById<TextView>(R.id.emptyMessage)
+                val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerViewDevices)
+
+                if (devices.isEmpty()) {
+                    emptyMessage?.visibility = View.VISIBLE
+                    recyclerView?.visibility = View.GONE
+                } else {
+                    emptyMessage?.visibility = View.GONE
+                    recyclerView?.visibility = View.VISIBLE
+                }
             }
             .addOnFailureListener { e ->
                 e.printStackTrace()
             }
     }
+
+
+    private fun updateFilteredList(query: String) {
+        val filtered = fullDeviceList.filter { dispositivo ->
+            dispositivo.imei.contains(query, ignoreCase = true) ||
+                    dispositivo.marca.contains(query, ignoreCase = true) ||
+                    dispositivo.modelo.contains(query, ignoreCase = true) ||
+                    dispositivo.cliente.contains(query, ignoreCase = true) ||
+                    dispositivo.ciudad.contains(query, ignoreCase = true)
+        }
+
+        deviceList.clear()
+        deviceList.addAll(filtered)
+        deviceAdapter.notifyDataSetChanged()
+    }
+
+    private fun filterDevices(status: String) {
+        val filteredDevices = when (status) {
+            "bloqueado" -> fullDeviceList.filter { it.estado == true }
+            "activo" -> fullDeviceList.filter { it.estado == false }
+            else -> fullDeviceList
+        }
+
+        deviceList.clear()
+        deviceList.addAll(filteredDevices)
+        deviceAdapter.notifyDataSetChanged()
+    }
+
+
+
     private fun cerrarSesion() {
         // --- OPCIÓN A: Si usas Firebase ---
         FirebaseAuth.getInstance().signOut()

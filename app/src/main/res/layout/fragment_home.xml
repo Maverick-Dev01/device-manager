@@ -1,26 +1,45 @@
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- CONTENIDO PRINCIPAL CON TOOLBAR + LISTA -->
+    <!-- CONTENIDO PRINCIPAL -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <!-- Toolbar con título e ícono hamburguesa -->
+        <!-- Toolbar -->
+
+        <!-- 📌 Texto vacío -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="?attr/colorOnSecondaryFixed"
             android:title="Dispositivos Registrados"
-            android:titleTextColor="@android:color/white"
-            android:background="#0A1D2C"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:titleTextColor="@color/md_theme_secondaryFixedDim" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/emptyMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aquí se mostraran los dispositivos registrados"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/md_theme_secondaryFixedDim"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintBottom_toTopOf="@id/fab_add_device"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
+            android:paddingTop="24dp" />
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -45,15 +64,17 @@
             app:elevation="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- MENÚ LATERAL -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/drawer_menu"
         app:headerLayout="@layout/drawer_header" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
+

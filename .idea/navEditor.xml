@@ -29,6 +29,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="forgotPasswordFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="139" />
+                            <option name="y" value="-392" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="homeFragment">
                     <value>
                       <LayoutPositions>
@@ -41,6 +53,11 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_homeFragment_to_addDeviceFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_homeFragment_to_viewDeviceFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -103,7 +120,12 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_homeFragment_to_viewDeviceFragment">
+                            <entry key="action_viewDeviceFragment_to_addDeviceFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_viewDeviceFragment_to_homeFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
