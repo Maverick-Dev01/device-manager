@@ -12,25 +12,27 @@
         android:padding="16dp">
 
         <!-- Toolbar -->
+
+        <!-- 📌 Texto vacío -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="?attr/colorOnSecondaryFixed"
             android:title="Dispositivos Registrados"
-            app:titleTextColor="@android:color/white"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:titleTextColor="@color/md_theme_secondaryFixedDim" />
 
-        <!-- 📌 Texto vacío -->
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/emptyMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Aquí se mostraran los dispositivos registrados"
             android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textColor="?attr/colorOnBackground"
+            android:textColor="@color/md_theme_secondaryFixedDim"
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:layout_constraintBottom_toTopOf="@id/fab_add_device"
@@ -68,7 +70,7 @@
     <!-- MENÚ LATERAL -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/drawer_menu"
