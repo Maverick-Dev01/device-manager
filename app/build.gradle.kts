@@ -74,10 +74,10 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.google.firebase:firebase-messaging")
     implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.android.gms:play-services-auth:20.1.0") // Google Sign-In
 
 
 
     //RecyclerView
   implementation("androidx.recyclerview:recyclerview:1.3.2")
-
 }
