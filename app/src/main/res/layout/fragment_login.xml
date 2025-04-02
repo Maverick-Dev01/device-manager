@@ -78,7 +78,7 @@
         android:layout_gravity="center_horizontal"/>
 
     <!-- Enlace para recuperacion de contraseña -->
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -91,4 +91,21 @@
         android:textColor="@color/md_theme_secondary"
         android:layout_gravity="center_horizontal"/>
 
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="Puedes ingresar usando tu cuenta de Google"
+        android:textColor="@color/md_theme_secondary"
+        android:layout_gravity="center_horizontal"/>
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_google_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Continuar con Google"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"/>
 </LinearLayout>
