@@ -2,6 +2,7 @@ package com.maverick.adminapp.ui.device
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +36,7 @@ class ViewDeviceFragment : Fragment() {
     private lateinit var btnEditar: Button
     private lateinit var btnEliminar: Button
     private lateinit var btnBloquear: Button
+    private lateinit var btnPaymentHistory: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,6 +74,7 @@ class ViewDeviceFragment : Fragment() {
         btnEditar = view.findViewById(R.id.btnEditar)
         btnBloquear = view.findViewById(R.id.btnBloquear)
         btnEliminar = view.findViewById(R.id.btnEliminar)
+        btnPaymentHistory = view.findViewById(R.id.btnPaymentHistory)
 
         imgBack = view.findViewById(R.id.btnBack)
 
@@ -135,8 +138,6 @@ class ViewDeviceFragment : Fragment() {
             }
     }
 
-
-
     private fun setupListener() {
 
         imgBack.setOnClickListener {
@@ -163,6 +164,20 @@ class ViewDeviceFragment : Fragment() {
                 .setNegativeButton("Cancelar", null)
                 .show()
         }
+
+        // Configurar el botón de historial de pagos
+        btnPaymentHistory.setOnClickListener {
+            // Verifica que el deviceId esté correctamente pasando
+            Log.d("ViewDeviceFragment", "Clic en botón de historial de pagos, deviceId: $deviceId")
+            // Navegar al PaymentHistoryFragment, pasando el deviceId
+            val bundle = Bundle().apply {
+                putString("deviceId", deviceId)
+            }
+            findNavController().navigate(R.id.action_viewDeviceFragment_to_paymentHistoryFragment, bundle)
+        }
+
+
+
     }
 
     private fun mostrarConfirmacionBloqueo() {
@@ -197,7 +212,7 @@ class ViewDeviceFragment : Fragment() {
             }
 
             btnBloquear?.apply {
-                text = if (estaBloqueado) "Desbloquear" else "Bloquear"
+                text = if (estaBloqueado) "DESBLOQUEAR" else "BLOQUEAR"
                 setOnClickListener {
                     if (estaBloqueado) {
                         mostrarConfirmacionDesbloqueo()

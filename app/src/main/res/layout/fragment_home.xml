@@ -18,13 +18,13 @@
             android:id="@+id/toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="?attr/colorOnSecondaryFixed"
+            android:background="?attr/colorOnPrimary"
             android:title="Dispositivos Registrados"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:titleTextColor="@color/md_theme_secondaryFixedDim" />
+            app:titleTextColor="@color/md_theme_primary" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/emptyMessage"
