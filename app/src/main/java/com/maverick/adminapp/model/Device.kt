@@ -14,5 +14,6 @@ data class Device(
     val fechaInicio: String = "",
     val fechaFin: String = "",
     val montoAPagar: Double? = null,
-    val estado: Boolean = true // true = Desbloqueado, false = Bloqueado
+    val estado: Boolean = true, // true = Desbloqueado, false = Bloqueado
+    val pagos: List<Pago> = emptyList()  // Campo para almacenar los pagos como una lista
 )

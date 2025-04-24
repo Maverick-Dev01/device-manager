@@ -20,6 +20,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.maverick.adminapp.R
 import com.maverick.adminapp.utils.DeviceFormHelper
 import com.maverick.adminapp.utils.NavigationHelper
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class AddDeviceFragment : Fragment() {
@@ -221,6 +224,10 @@ class AddDeviceFragment : Fragment() {
         }
 
         calculatePayment()
+        Log.d("PaymentHistoryFragment", "Frecuencia: $frecuencia, Periodo: $periodo, Fecha de Inicio: $fechaInicio")
+        // Calculamos el historial de pagos (solo las fechas)
+        val pagos = calculatePaymentDates(frecuencia, periodo, fechaInicio)
+        Log.d("PaymentHistoryFragment", "Pagos calculados: $pagos")
 
         val dispositivo = hashMapOf(
             "uid" to uid,
@@ -235,7 +242,8 @@ class AddDeviceFragment : Fragment() {
             "periodoPago" to periodo,
             "fechaInicio" to fechaInicio,
             "fechaFin" to fechaFin,
-            "montoAPagar" to (montoAPagar ?: 0.0)
+            "montoAPagar" to (montoAPagar ?: 0.0),
+            "pagos" to pagos // Aquí agregamos el historial de pagos con las fechas
         )
 
         Log.d(
@@ -243,20 +251,84 @@ class AddDeviceFragment : Fragment() {
             "Registrando dispositivo con montoAPagar: ${amountToPay.text.toString()}"
         )
 
+        // Antes de enviar el registro de dispositivo
+        Log.d("PaymentHistoryFragment", "Registrando dispositivo con los siguientes datos: deviceId: pagos: $pagos")
+
+        // Registrar dispositivo en Firestore
         db.collection("dispositivos")
             .add(dispositivo)
             .addOnSuccessListener { documentReference ->
-                Log.d("Firebase", "Dispositivo registrado con ID: ${documentReference.id}")
+                // Log detallado de éxito
+                Log.d("PaymentHistoryFragment", "Dispositivo registrado con ID: ${documentReference.id}")
                 Toast.makeText(requireContext(), "Registro exitoso", Toast.LENGTH_SHORT).show()
-
-                // 🔥 Redirigir al Home
+                // Redirigir después del registro
                 findNavController().navigate(R.id.action_addDeviceFragment_to_homeFragment)
             }
             .addOnFailureListener { e ->
-                Log.e("Firebase", "Error al registrar", e)
+                Log.e("PaymentHistoryFragment", "Error al registrar dispositivo: $e")
                 Toast.makeText(requireContext(), "Error al registrar", Toast.LENGTH_SHORT).show()
             }
+
     }
+
+    // Función que calcula las fechas de los pagos en base a la frecuencia y el periodo
+    private fun calculatePaymentDates(frecuencia: String, periodo: String, fechaInicio: String): List<Map<String, Any>> {
+        val paymentDates = mutableListOf<Map<String, Any>>()
+
+        // Convertir fechaInicio a Date
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val start = dateFormat.parse(fechaInicio)
+        val calendar = Calendar.getInstance()
+        calendar.time = start
+
+        // Definir cuántos pagos generar según la frecuencia y el periodo
+        val numPayments = when (frecuencia) {
+            "Semanal" -> 4 * when (periodo) {
+                "Anual" -> 12
+                "Semestral" -> 2
+                else -> 1
+            }
+            "Quincenal" -> when (periodo) {
+                "Anual" -> 24  // 2 pagos por mes, 12 meses
+                "Semestral" -> 12  // 2 pagos por mes, 6 meses
+                else -> 1
+            }
+            "Mensual" -> when (periodo) {
+                "Anual" -> 12
+                "Semestral" -> 6
+                "Trimestral" -> 3
+                else -> 1
+            }
+            else -> 0
+        }
+
+        // Verificar que numPayments sea mayor que 0
+        Log.d("PaymentHistoryFragment", "NumPayments calculados: $numPayments")
+
+        // Generar las fechas de los pagos
+        for (i in 0 until numPayments) {
+            // Calcular la fecha de pago
+            calendar.add(Calendar.MONTH, 1) // Incrementamos un mes
+
+            val paymentDate = dateFormat.format(calendar.time)
+            val estado = "Pendiente"
+
+            // Crear el pago con la fecha y agregarlo al array de pagos
+            val payment = mapOf(
+                "fechaPago" to paymentDate,
+                "estado" to estado
+            )
+
+            paymentDates.add(payment)
+
+            // Agregar log para verificar el contenido de los pagos
+            Log.d("PaymentHistoryFragment", "Pago calculado: $paymentDate")
+        }
+
+        return paymentDates
+    }
+
+
 
     private fun obtenerDatosDispositivo(deviceId: String) {
         val db = FirebaseFirestore.getInstance()
