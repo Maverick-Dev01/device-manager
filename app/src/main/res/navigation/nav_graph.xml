@@ -64,6 +64,9 @@
             android:id="@+id/action_viewDeviceFragment_to_homeFragment"
             app:destination="@id/homeFragment">
         </action>
+        <action
+            android:id="@+id/action_viewDeviceFragment_to_paymentHistoryFragment"
+            app:destination="@id/paymentHistoryFragment" />
     </fragment>
 
     <!-- Add Device Fragment (Donde se agrega o edita un dispositivo) -->
@@ -86,6 +89,15 @@
         <action
             android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/paymentHistoryFragment"
+        android:name="com.maverick.adminapp.device.PaymentHistoryFragment"
+        android:label="fragment_payment_history"
+        tools:layout="@layout/fragment_payment_history" >
+        <action
+            android:id="@+id/action_paymentHistoryFragment_to_viewDeviceFragment"
+            app:destination="@id/viewDeviceFragment" />
     </fragment>
 
 </navigation>
