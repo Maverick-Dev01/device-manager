@@ -167,12 +167,14 @@ class AddDeviceFragment : Fragment() {
         val startDateText = startDate.text.toString()
         val endDateText = endDate.text.toString()
         val frequencyText = frequencyAC.text.toString()
+        val periodText = periodAC.text.toString()
 
         DeviceFormHelper.calculatePaymentAmount(
             price,
             startDateText,
             endDateText,
             frequencyText,
+            periodText,
             amountToPay
         )
         Log.d("PaymentCalc", "Monto a pagar calculado: ${amountToPay.text.toString()}")
@@ -283,14 +285,16 @@ class AddDeviceFragment : Fragment() {
 
         // Definir cuántos pagos generar según la frecuencia y el periodo
         val numPayments = when (frecuencia) {
-            "Semanal" -> 4 * when (periodo) {
-                "Anual" -> 12
-                "Semestral" -> 2
+            "Semanal" -> when (periodo) {
+                "Anual" -> 48
+                "Semestral" -> 24
+                "Trimestral" -> 12
                 else -> 1
             }
             "Quincenal" -> when (periodo) {
                 "Anual" -> 24  // 2 pagos por mes, 12 meses
                 "Semestral" -> 12  // 2 pagos por mes, 6 meses
+                "Trimestral" -> 3
                 else -> 1
             }
             "Mensual" -> when (periodo) {
