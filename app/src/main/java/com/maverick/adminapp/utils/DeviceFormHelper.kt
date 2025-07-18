@@ -161,6 +161,7 @@ object DeviceFormHelper {
         startDate: String,
         endDate: String,
         frequency: String,
+        period: String,
         amountTextView: TextInputEditText
     ) {
         if (price == null || price <= 0 || startDate.isEmpty() || endDate.isEmpty() || frequency.isEmpty()) {
@@ -180,10 +181,29 @@ object DeviceFormHelper {
 
                 // Definir la cantidad de pagos según la frecuencia
                 val numberOfPayments = when (frequency) {
-                    "Semanal" -> totalDays / 7  // Semanas completas
-                    "Quincenal" -> totalDays / 15 // Quincenas completas
-                    "Mensual" -> totalDays / 30  // Meses completos
-                    else -> 1  // Evitar divisiones por 0
+                    "Semanal" -> when (period) {
+                        "Anual" -> 48
+                        "Semestral" -> 24
+                        "Trimestral" -> 12
+                        else -> 1
+                    }
+                    "Quincenal" -> when (period) {
+                        "Anual" -> 24  // 2 pagos por mes, 12 meses
+                        "Semestral" -> 12  // 2 pagos por mes, 6 meses
+                        "Trimestral" -> 3
+                        else -> 1
+                    }
+                    "Mensual" -> when (period) {
+                        "Anual" -> 12
+                        "Semestral" -> 6
+                        "Trimestral" -> 3
+                        else -> 1
+                    }
+                    else -> 0
+//                    "Semanal" -> totalDays / 7  // Semanas completas
+//                    "Quincenal" -> totalDays / 15 // Quincenas completas
+//                    "Mensual" -> totalDays / 30  // Meses completos
+//                    else -> 1  // Evitar divisiones por 0
                 }
 
                 // Si numberOfPayments es menor o igual a 0, asignar al menos 1 para evitar errores

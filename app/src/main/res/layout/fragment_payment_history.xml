@@ -42,6 +42,42 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/paymentSummaryContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@color/md_theme_primaryContainer"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/txtResumenPagos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Resumen de pagos"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/md_theme_onPrimaryContainer" />
+
+            <TextView
+                android:id="@+id/txtPagoProgreso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Completados: 3 / 5 pagos"
+                android:textColor="@color/md_theme_onPrimaryContainer"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/txtMontoResumen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pagado: $1200 | Pendiente: $800"
+                android:textColor="@color/md_theme_onPrimaryContainer"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+
         <!-- Lista de pagos -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPayments"
