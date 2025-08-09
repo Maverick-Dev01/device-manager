@@ -15,6 +15,7 @@ import com.maverick.adminapp.model.Pago
 class PaymentHistoryAdapter(private var payments: List<Pago>) : RecyclerView.Adapter<PaymentHistoryAdapter.PaymentViewHolder>() {
 
     var onAllPaymentsCompleted: (() -> Unit)? = null  // Función de callback
+    var onPagoCambiado: (() -> Unit)? = null
 
     private fun allPaymentsCompleted(): Boolean {
         return payments.all { it.estado == "Pagado" }
@@ -36,6 +37,7 @@ class PaymentHistoryAdapter(private var payments: List<Pago>) : RecyclerView.Ada
         holder.bind(payment) {
             if (allPaymentsCompleted()) {
                 onAllPaymentsCompleted?.invoke()
+                onPagoCambiado?.invoke()
             }
         }
     }

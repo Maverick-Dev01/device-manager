@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,6 +35,11 @@ class PaymentHistoryFragment : Fragment() {
     private lateinit var paymentsList: MutableList<Pago>  // Lista de fechas de pagos
     private lateinit var recyclerView: RecyclerView
     private lateinit var imgBack : ImageView
+
+    //Detalles de pagos
+    private lateinit var txtPagoProgreso: TextView
+    private lateinit var txtMontoResumen: TextView
+
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -100,6 +106,10 @@ class PaymentHistoryFragment : Fragment() {
     private fun initViews(view: View) {
         recyclerView = view.findViewById(R.id.recyclerViewPayments)
 
+        //Vistas de detalles de pagos encabezado
+        txtPagoProgreso = view.findViewById(R.id.txtPagoProgreso)
+        txtMontoResumen = view.findViewById(R.id.txtMontoResumen)
+
         imgBack = view.findViewById(R.id.btnBack)
 
         imgBack.setOnClickListener {
@@ -109,9 +119,31 @@ class PaymentHistoryFragment : Fragment() {
             findNavController().navigate(R.id.action_paymentHistoryFragment_to_viewDeviceFragment, bundle)
         }
     }
+    private fun actualizarResumenDePagos() {
+        val totalPagos = paymentsList.size
+        val pagosCompletados = paymentsList.count { it.estado == "Pagado" }
+        val pagosPendientes = totalPagos - pagosCompletados
+
+        val montoTotal = paymentsList.sumOf { it.montoAPagar }
+        val montoPagado = paymentsList.filter { it.estado == "Pagado" }.sumOf { it.montoAPagar }
+        val montoPendiente = montoTotal - montoPagado
+
+        txtPagoProgreso.text = "Completados: $pagosCompletados / $totalPagos pagos"
+        txtMontoResumen.text = "Pagado: $${String.format("%.2f", montoPagado)} | Pendiente: $${String.format("%.2f", montoPendiente)}"
+    }
+
 
     private fun setupRecyclerView() {
         paymentHistoryAdapter = PaymentHistoryAdapter(paymentsList)
+
+        paymentHistoryAdapter.onPagoCambiado = {
+            actualizarResumenDePagos()
+        }
+
+
+
+
+
 
         paymentHistoryAdapter.onAllPaymentsCompleted = {
             AlertDialog.Builder(requireContext())
@@ -168,6 +200,7 @@ class PaymentHistoryFragment : Fragment() {
 
                 // Actualizar el adaptador con la lista de pagos
                 paymentHistoryAdapter.setPayments(paymentsList)
+                actualizarResumenDePagos()
             }
             .addOnFailureListener { e ->
                 Log.e("PaymentHistoryFragment", "Error al cargar los pagos: ${e.message}", e)
